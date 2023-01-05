@@ -3,6 +3,7 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using ProductCatalogAPI.Data;
 using ProductCatalogAPI.Domain;
+using ProductCatalogAPI.viewmodels;
 
 namespace ProductCatalogAPI.Controllers
 {
@@ -19,33 +20,78 @@ namespace ProductCatalogAPI.Controllers
             _config = config;
         }
         
-        [HttpGet("[action")]
+        [HttpGet("[action]")]
         public async Task<IActionResult> CatalogTypes()
         {
           var types = await _context.CatalogTypes.ToListAsync();
             return Ok(types);
         }
 
-        [HttpGet("[action")]
+        [HttpGet("[action]")]
         public async Task<IActionResult> Catalogbrands()
         {
             var Brands = await _context.CatalogBrands.ToListAsync();
             return Ok(Brands);
         }
 
-        [HttpGet("[action}")]
+        [HttpGet("[action]")]
         public async Task<IActionResult> Items(
             [FromQuery]int pageIndex = 0, [FromQuery]int pageSize = 6)
         {
-          var items= await  _context.Catalog
+            var itemsCount = _context.Catalog.LongCountAsync();
+            var items= await  _context.Catalog
                 .OrderBy(c => c.Name)
                 .Skip(pageIndex * pageSize)
                 .Take(pageSize)
                 .ToListAsync();
 
             items = ChangePictureUrl(items);
-            return Ok(items);   
+
+            var model = new PaginatedItemsViewModel
+            {
+                PageIndex = pageIndex,
+                PageSize = items.Count,
+                Data = items,
+                Count = itemsCount.Result
+            };
+            return Ok(model);   
         }
+        [HttpGet("[action]/filter")]
+        public async Task<IActionResult> Items(
+            [FromQuery] int? catalogTypeId,
+            [FromQuery] int? catalogbrandId,
+            [FromQuery] int pageIndex = 0, 
+            [FromQuery] int pageSize = 6)
+        {
+            var query = (IQueryable<CatalogItem>)_context.Catalog;
+            if (catalogTypeId.HasValue)
+            {
+                query = query.Where(c => c.CatalogTypeId == catalogTypeId.Value);
+            }
+            if (catalogbrandId.HasValue)
+            {
+                query = query.Where(c => c.CatalogBrandId == catalogbrandId.Value);
+            }
+
+            var itemsCount = query.LongCountAsync();
+            var items = await query 
+                .OrderBy(c => c.Name)
+                .Skip(pageIndex * pageSize)
+                .Take(pageSize)
+                .ToListAsync();
+
+            items = ChangePictureUrl(items);
+
+            var model = new PaginatedItemsViewModel
+            {
+                PageIndex = pageIndex,
+                PageSize = items.Count,
+                Data = items,
+                Count = itemsCount.Result
+            };
+            return Ok(model);
+        }
+
 
         private List<CatalogItem> ChangePictureUrl(List<CatalogItem> items)
         {
