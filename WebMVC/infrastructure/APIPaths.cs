@@ -23,7 +23,7 @@
                 }
                 if (type.HasValue)
                 {
-                    filterQs = (filterQs == string.Empty) ? $"catalogTypeId={type.Value}" : $"&catalogTypeId={type.Value}";
+                    filterQs = (filterQs == string.Empty) ? $"catalogTypeId={type.Value}" : $"{filterQs}&catalogTypeId={type.Value}";
                 }
                 if (string.IsNullOrEmpty(filterQs))
                 {

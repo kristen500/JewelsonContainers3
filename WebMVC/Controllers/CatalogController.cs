@@ -7,19 +7,19 @@ namespace WebMVC.Controllers
 
     public class CatalogController : Controller
     {
-        private readonly ICatalogService _Service;
+        private readonly ICatalogService _service;
         public CatalogController(ICatalogService service)
         {
-            _Service = service;
+            _service = service;
         }
         public async Task <IActionResult> Index(int? page, int? brandFilterApplied, int? typesFilterApplied)
         {
             var itemsOnPage = 10;
-            var catalog = await _Service.GetCatalogItemsAsync(page ?? 0, itemsOnPage, brandFilterApplied, typesFilterApplied);
+            var catalog = await _service.GetCatalogItemsAsync(page ?? 0, itemsOnPage, brandFilterApplied, typesFilterApplied);
             var vm = new CatalogIndexViewModel
             {
-                Brands = await _Service.GetBrandsAsync(),
-                Types = await _Service.GetTypesAsync(),
+                Brands = await _service.GetBrandsAsync(),
+                Types = await _service.GetTypesAsync(),
                 CatalogItems = catalog.Data,
                 PaginationInfo = new PaginationInfo
                 {

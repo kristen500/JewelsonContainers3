@@ -1,9 +1,11 @@
+using Microsoft.AspNetCore.Authentication.Cookies;
+using System.Configuration;
 using WebMVC.infrastructure;
 using WebMVC.services;
+using WebMVC.Models;
+
 
 var builder = WebApplication.CreateBuilder(args);
-
-builder.Services.AddControllersWithViews();
 
 // Add services to the container.
 builder.Services.AddRazorPages();
