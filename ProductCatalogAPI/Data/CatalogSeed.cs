@@ -14,7 +14,7 @@ namespace ProductCatalogAPI.Data
                 context.CatalogTypes.AddRange(GetCatalogTypes());
                 context.SaveChanges();
             }
-            if (!context.CatalogTypes.Any())
+            if (!context.CatalogBrands.Any())
             {
                 context.CatalogBrands.AddRange(GetCatalogBrands());
                 context.SaveChanges();
@@ -22,7 +22,7 @@ namespace ProductCatalogAPI.Data
             if (!context.Catalog.Any())
             {
                 context.Catalog.AddRange(GetCatalogItems());
-                
+                context.SaveChanges();
             }
         }
 

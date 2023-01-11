@@ -2,15 +2,59 @@ using Microsoft.AspNetCore.Authentication.Cookies;
 using System.Configuration;
 using WebMVC.infrastructure;
 using WebMVC.services;
+using ConfigurationManager = Microsoft.Extensions.Configuration.ConfigurationManager;
+using Microsoft.AspNetCore.Authentication.OpenIdConnect;
+using Microsoft.IdentityModel.Tokens;
+using WebMVC.Services;
 using WebMVC.Models;
 
-
 var builder = WebApplication.CreateBuilder(args);
+ConfigurationManager configuration = builder.Configuration;
 
-// Add services to the container.
+
+builder.Services.AddControllersWithViews();
+
+
 builder.Services.AddRazorPages();
 builder.Services.AddSingleton<IHttpClient, CustomHttpClient>();
-builder.Services.AddTransient<ICatalogService, Catalogservice>();
+builder.Services.AddTransient<ICatalogService, CatalogService>();
+builder.Services.AddTransient<IIdentityService<ApplicationUser>, IdentityService>();
+
+
+var identityUrl = configuration["IdentityUrl"];
+var callBackUrl = configuration["CallBackUrl"];
+
+builder.Services.AddAuthentication(options =>
+{
+    options.DefaultScheme = CookieAuthenticationDefaults.AuthenticationScheme;
+    options.DefaultChallengeScheme = OpenIdConnectDefaults.AuthenticationScheme;
+    options.DefaultSignInScheme = CookieAuthenticationDefaults.AuthenticationScheme;
+    options.DefaultSignOutScheme = CookieAuthenticationDefaults.AuthenticationScheme;
+})
+.AddCookie(CookieAuthenticationDefaults.AuthenticationScheme)
+.AddOpenIdConnect(OpenIdConnectDefaults.AuthenticationScheme, options =>
+{
+    options.SignInScheme = CookieAuthenticationDefaults.AuthenticationScheme;
+    options.Authority = identityUrl.ToString();
+    options.SignedOutRedirectUri = callBackUrl.ToString();
+    options.ClientId = "MVC";
+    options.ClientSecret = "secret";
+    options.RequireHttpsMetadata = false;
+    options.SaveTokens = true;
+    options.ResponseType = "code id_token";
+    options.GetClaimsFromUserInfoEndpoint = true;
+    options.Scope.Add("openid");
+    options.Scope.Add("profile");
+    options.Scope.Add("order");
+    options.Scope.Add("basket");
+    options.TokenValidationParameters = new TokenValidationParameters()
+    {
+
+        NameClaimType = "name",
+        RoleClaimType = "role",
+    };
+});
+
 
 var app = builder.Build();
 
@@ -26,13 +70,12 @@ app.UseHttpsRedirection();
 app.UseStaticFiles();
 
 app.UseRouting();
-
+app.UseAuthentication();
 app.UseAuthorization();
-
-app.MapRazorPages();
 
 app.MapControllerRoute(
     name: "default",
-    pattern: "{contoller-Catalog}/{action=Index}");
+    pattern: "{Controller=Catalog}/{action=Index}");
 
 app.Run();
+

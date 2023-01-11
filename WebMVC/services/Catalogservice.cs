@@ -7,29 +7,29 @@ using WebMVC.Models;
 
 namespace WebMVC.services
 {
-    public class Catalogservice : ICatalogService
+    public class CatalogService : ICatalogService
     {
         private readonly IHttpClient _httpClient;
         private readonly string _baseUrl;
-        public Catalogservice(IConfiguration config, IHttpClient client)
+        public CatalogService(IConfiguration config, IHttpClient client)
         {
             _httpClient = client;
-            _baseUrl = $"{config["CatalogUrl"]}/api/Catalog";
+            _baseUrl = $"{config["CatalogUrl"]}/api/catalog";
         }
         public async Task<IEnumerable<SelectListItem>> GetBrandsAsync()
         {
             var brandUri = APIPaths.Catalog.GetAllBrands(_baseUrl);
-            var datastring = await _httpClient.GetStringAsync(brandUri);
+            var dataString = await _httpClient.GetStringAsync(brandUri);
             var items = new List<SelectListItem>()
             {
                 new SelectListItem
                 {
-                Value = null,
-                Text = "All",
-                Selected = true,
+                    Value = null,
+                    Text = "All",
+                    Selected = true,
                 }
             };
-           var brands = JArray.Parse(datastring);
+            var brands = JArray.Parse(dataString);
             foreach (var item in brands)
             {
                 items.Add(new SelectListItem
@@ -44,24 +44,24 @@ namespace WebMVC.services
         public async Task<Catalog> GetCatalogItemsAsync(int page, int size, int? brand, int? type)
         {
             var catalogItemsUri = APIPaths.Catalog.GetAllCatalogItems(_baseUrl, page, size, brand, type);
-            var datastring = await _httpClient.GetStringAsync(catalogItemsUri);
-            return JsonConvert.DeserializeObject<Catalog>(datastring);
+            var dataString = await _httpClient.GetStringAsync(catalogItemsUri);
+            return JsonConvert.DeserializeObject<Catalog>(dataString);
         }
 
         public async Task<IEnumerable<SelectListItem>> GetTypesAsync()
         {
             var typesUri = APIPaths.Catalog.GetAllTypes(_baseUrl);
-            var datastring = await _httpClient.GetStringAsync(typesUri);
+            var dataString = await _httpClient.GetStringAsync(typesUri);
             var items = new List<SelectListItem>()
             {
                 new SelectListItem
                 {
-                Value = null,
-                Text = "All",
-                Selected = true,
+                    Value = null,
+                    Text = "All",
+                    Selected = true,
                 }
             };
-            var types = JArray.Parse(datastring);
+            var types = JArray.Parse(dataString);
             foreach (var item in types)
             {
                 items.Add(new SelectListItem

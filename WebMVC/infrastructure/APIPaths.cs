@@ -6,11 +6,11 @@
         {
             public static string GetAllTypes(string baseUri)
             {
-                return $"{baseUri}/Catalogtypes";
+                return $"{baseUri}/catalogtypes";
             }
             public static string GetAllBrands(string baseUri)
             {
-                return $"{baseUri}/Catalogbrands";
+                return $"{baseUri}/catalogbrands";
             }
             public static string GetAllCatalogItems(string baseUri, int page, int take,
                 int? brand, int? type)
@@ -23,7 +23,8 @@
                 }
                 if (type.HasValue)
                 {
-                    filterQs = (filterQs == string.Empty) ? $"catalogTypeId={type.Value}" : $"{filterQs}&catalogTypeId={type.Value}";
+                    filterQs = (filterQs == string.Empty) ? $"catalogTypeId={type.Value}" :
+                         $"{filterQs}&catalogTypeId={type.Value}";
                 }
                 if (string.IsNullOrEmpty(filterQs))
                 {
@@ -33,9 +34,9 @@
                 {
                     preUri = $"{baseUri}/items/filter?pageIndex={page}&pageSize={take}&{filterQs}";
                 }
-
                 return preUri;
             }
+
         }
     }
 }
