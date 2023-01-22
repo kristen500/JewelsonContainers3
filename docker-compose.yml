@@ -30,8 +30,9 @@ services:
     environment:
       ASPNETCORE_ENVIRONMENT: Production
       CatalogUrl: http://catalog
-      IdentityUrl: http://2601:601:100::d4f0:6b46:7800
+      IdentityUrl: http://10.0.0.98:7900
       CallBackUrl: http://localhost:7500
+      CartUrl: http://cart
     ports:
       - "7500:80"
     container_name: webshop
@@ -40,6 +41,7 @@ services:
     depends_on:
       - catalog
       - tokenserver
+      - cart
      
   
   tokenserver:
@@ -58,6 +60,25 @@ services:
       - backend
     depends_on:
       - tokensqlserver    
+
+  cart:
+    image: jewels/cartapi
+    build:
+      context: .\CartApi
+      dockerfile: Dockerfile
+    environment:
+      IdentityUrl: http://10.0.0.98:7900
+      ConnectionString: basket.data
+    ports:
+      - "7010:80"
+    container_name: jewelscartapi
+    networks:
+      - frontend
+      - backend
+    depends_on:
+      - tokenserver
+      - basket.data
+     
 
   mssqlserver:
     image: "mcr.microsoft.com/mssql/server:latest"
@@ -80,5 +101,13 @@ services:
     ports:
       - "1448:1433"
     container_name: jewelstokensqlserver
+    networks:
+      - backend
+
+  basket.data:
+    image: redis
+    ports:
+      - "7050:6379"
+    container_name: basketdata
     networks:
       - backend

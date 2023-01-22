@@ -34,8 +34,8 @@ namespace TokenServiceAPI
         {
             services.AddControllersWithViews();
             services.AddMvc(option => option.EnableEndpointRouting = false);
-            var migrationsAssembly = typeof(Startup).GetTypeInfo().Assembly.GetName().Name; 
-            
+            var migrationsAssembly = typeof(Startup).GetTypeInfo().Assembly.GetName().Name;
+
             services.AddDbContext<ApplicationDbContext>(options =>
                 options.UseSqlServer(Configuration["ConnectionString"]));
             services.AddIdentity<IdentityUser, IdentityRole>()

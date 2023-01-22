@@ -46,7 +46,7 @@ namespace TokenServiceAPI
 	                //implicit flow grant type
 	                new Client
 					{
-						ClientId = "mvc",
+						ClientId = "MVC",
 						ClientName = "MVC Client",
 						AllowedGrantTypes = GrantTypes.Hybrid, //means user is redirected to identity server
 	                    ClientSecrets = new [] { new Secret("secret".Sha256())},

@@ -35,5 +35,6 @@ namespace TokenServiceAPI
                 {
                     webBuilder.UseStartup<Startup>();
                 });
+
     }
 }
