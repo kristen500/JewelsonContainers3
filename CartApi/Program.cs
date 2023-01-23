@@ -13,12 +13,14 @@ builder.Services.AddControllers().AddNewtonsoftJson();
 builder.Services.AddTransient<ICartRepository, RedisCartRepository>();
 builder.Services.AddSingleton<ConnectionMultiplexer>(cm =>
 {
-    var config = ConfigurationOptions.Parse(configuration["ConnectionString"], true);
+    var config = ConfigurationOptions.Parse(
+        configuration["ConnectionString"], true);
     config.ResolveDns = true;
     config.AbortOnConnectFail = true;
     return ConnectionMultiplexer.Connect(config);
 });
 
+// prevent from mapping "sub" claim to nameidentifier.
 JwtSecurityTokenHandler.DefaultInboundClaimTypeMap.Clear();
 
 var identityUrl = configuration["IdentityUrl"];
@@ -27,19 +29,18 @@ builder.Services.AddAuthentication(options =>
     options.DefaultAuthenticateScheme = JwtBearerDefaults.AuthenticationScheme;
     options.DefaultChallengeScheme = JwtBearerDefaults.AuthenticationScheme;
 })
-    .AddJwtBearer(options =>
+.AddJwtBearer(options =>
+{
+    options.Authority = identityUrl.ToString();
+    options.RequireHttpsMetadata = false;
+    options.TokenValidationParameters = new TokenValidationParameters
     {
-        options.Authority = identityUrl.ToString();
-        options.RequireHttpsMetadata = false;
-        options.TokenValidationParameters = new TokenValidationParameters
-        {
-            ValidateIssuerSigningKey = false,
-            ValidateIssuer = false,
-            ValidateAudience = false
-        };
-        options.Audience = "basket";
-    });
-
+        ValidateIssuerSigningKey = false,
+        ValidateIssuer = false,
+        ValidateAudience = false
+    };
+    options.Audience = "basket";
+});
 // Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();
@@ -54,8 +55,8 @@ if (app.Environment.IsDevelopment())
 }
 
 app.UseHttpsRedirection();
-app.UseAuthorization();
 app.UseAuthentication();
+app.UseAuthorization();
 
 app.MapControllers();
 
