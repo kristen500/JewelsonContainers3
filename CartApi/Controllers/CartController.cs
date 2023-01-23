@@ -3,6 +3,7 @@ using CartApi.Models;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.IdentityModel.Tokens;
 using System.Net;
 
 namespace CartApi.Controllers
@@ -13,28 +14,25 @@ namespace CartApi.Controllers
     public class CartController : ControllerBase
     {
         private readonly ICartRepository _repository;
-        public CartController(ICartRepository repository)
+        public CartController(ICartRepository respository)
         {
-            _repository = repository;
+            _repository = respository;
         }
-
         [HttpGet("{id}")]
-        [ProducesResponseType(typeof(Cart), (int) HttpStatusCode.OK)]
+        [ProducesResponseType(typeof(Cart), (int)HttpStatusCode.OK)]
         public async Task<IActionResult> Get(string id)
         {
-          var basket = await  _repository.GetCartAsync(id);
+            var basket = await _repository.GetCartAsync(id);
             return Ok(basket);
         }
-
         [HttpPost]
-        [ProducesResponseType(typeof(Cart), (int)HttpStatusCode.OK)] 
+        [ProducesResponseType(typeof(Cart), (int)HttpStatusCode.OK)]
 
-        public async Task<IActionResult> Post([FromBody]Cart basket)
+        public async Task<IActionResult> Post([FromBody] Cart basket)
         {
-           var updatedBasket = await _repository.UpdateCartAsync(basket);
+            var updatedBasket = await _repository.UpdateCartAsync(basket);
             return Ok(updatedBasket);
         }
-
         [HttpDelete("{id}")]
         public async void Delete(string id)
         {

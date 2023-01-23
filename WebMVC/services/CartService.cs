@@ -52,7 +52,6 @@ namespace WebMVC.services
         {
             var token = await GetUserTokenAsync();
             var getBasketUri = APIPaths.Basket.GetBasket(_baseUrl, user.Email);
-
             var dataString = await _apiClient.GetStringAsync(getBasketUri, token);
             var response = JsonConvert.DeserializeObject<Cart>(dataString) ??
                 new Cart
