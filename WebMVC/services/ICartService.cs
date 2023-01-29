@@ -1,5 +1,6 @@
 ﻿using WebMVC.Models;
 using WebMVC.Models.CartModels;
+using WebMVC.Models.OrderModels;
 
 namespace WebMVC.services
 {
@@ -9,6 +10,7 @@ namespace WebMVC.services
         Task AddItemToCart(ApplicationUser user, CartItem product);
         Task<Cart> UpdateCart(Cart Cart);
         Task<Cart> SetQuantities(ApplicationUser user, Dictionary<string, int> quantities);
+        Order MapCartToOrder(Cart Cart);
         Task ClearCart(ApplicationUser user);
     }
 }

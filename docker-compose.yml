@@ -33,6 +33,9 @@ services:
       IdentityUrl: http://10.0.0.98:7900
       CallBackUrl: http://localhost:7500
       CartUrl: http://cart
+      OrderUrl: http://order
+      StripePublicKey: pk_test_51MUkjcBB9ume8LUI3aRDbMxsz3r6JFpWKQFb8zxc3219JZ2Tj2R6shtWzkv6CdbuDH3tmIaLOZwjFs6Hc0IHKdoZ00G3qtzUZ8
+      StripePrivateKey: sk_test_51MUkjcBB9ume8LUI86vTrvZPeHHMgTuBAq6kECzSN9bZEe32H0brelFadwjB5rWWSYtbGxIMGxILOaDnvSEJaUq900NdiOR25F
     ports:
       - "7500:80"
     container_name: webshop
@@ -42,6 +45,7 @@ services:
       - catalog
       - tokenserver
       - cart
+      - order
      
   
   tokenserver:
@@ -78,7 +82,25 @@ services:
     depends_on:
       - tokenserver
       - basket.data
-     
+  
+  order:
+    image: jewels/orderapi
+    build:
+      context: .\OrderApi
+      dockerfile: Dockerfile
+    environment: 
+      IdentityUrl: http://10.0.0.98:7900
+      ConnectionString: "Data Source=ordersqlserver;Initial Catalog=OrdersDb;User Id=sa;Password=ProductApi123(!);Connect Timeout=30;TrustServerCertificate=false;Encrypt=false;"
+    ports:
+      - "7020:80"
+    container_name: jewelsorderapii
+    networks:
+      - frontend
+      - backend
+    depends_on:
+      - tokenserver
+      - ordersqlserver
+      
 
   mssqlserver:
     image: "mcr.microsoft.com/mssql/server:latest"
@@ -103,6 +125,19 @@ services:
     container_name: jewelstokensqlserver
     networks:
       - backend
+
+  ordersqlserver:
+    image: "mcr.microsoft.com/mssql/server:latest"
+    environment:
+      ACCEPT_EULA: Y
+      MSSQL_SA_PASSWORD: ProductApi123(!)
+      SA_PASSWORD: ProductApi123(!)
+    ports:
+      - "1450:1433"
+    container_name: jewelsordersqlserver
+    networks:
+      - backend
+
 
   basket.data:
     image: redis
