@@ -41,6 +41,7 @@ namespace WebMVC.Controllers
         }
 
         [HttpPost]
+        [HttpPost]
         public async Task<IActionResult> Create(Order frmOrder)
         {
             //if (ModelState.IsValid)
@@ -104,6 +105,7 @@ namespace WebMVC.Controllers
                 ModelState.AddModelError("Error", "It was not possible to create a new order, please try later on. (Business Msg Due to Circuit-Breaker)");
                 return View(frmOrder);
             }
+
 
             //}
             //else
