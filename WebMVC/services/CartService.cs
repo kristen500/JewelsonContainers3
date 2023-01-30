@@ -35,7 +35,8 @@ namespace WebMVC.services
             if (basketItem == null)
             {
                 cart.Items.Add(product);
-            }else
+            }
+            else
             {
                 basketItem.Quantity++;
             }

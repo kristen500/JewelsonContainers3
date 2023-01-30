@@ -10,7 +10,7 @@ namespace WebMVC.infrastructure
         {
             _httpClient = new HttpClient();
         }
-        public async Task<HttpResponseMessage> DeleteAsync<T>(string uri, T item, string authorizationToken = null, string authorizationMethod = "Bearer")
+        public async Task<HttpResponseMessage> DeleteAsync(string uri, string authorizationToken = null, string authorizationMethod = "Bearer")
         {
             var requestMessage = new HttpRequestMessage(HttpMethod.Delete, uri);
             if (authorizationToken != null)
@@ -21,6 +21,7 @@ namespace WebMVC.infrastructure
             return await _httpClient.SendAsync(requestMessage);
 
         }
+
 
         public async Task<string> GetStringAsync(string uri, string authorizationToken = null, string authorizationMethod = "Bearer")
         {

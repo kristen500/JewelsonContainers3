@@ -55,16 +55,15 @@
             {
                 return $"{baseUri}/{basketId}";
             }
-     
         }
 
         public static class Order
         {
-
             public static string GetOrder(string baseUri, string orderId)
             {
                 return $"{baseUri}/{orderId}";
             }
+
             public static string AddNewOrder(string baseUri)
             {
                 return $"{baseUri}/new";
@@ -72,5 +71,3 @@
         }
     }
 }
-
-

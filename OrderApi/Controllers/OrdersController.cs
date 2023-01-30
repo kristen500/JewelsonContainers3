@@ -48,8 +48,8 @@ namespace OrderApi.Controllers
         }
 
 
-        [Route("new")]
-        [HttpPost]
+        
+        [HttpPost("new")]
         [ProducesResponseType((int)HttpStatusCode.OK)]
         [ProducesResponseType((int)HttpStatusCode.BadRequest)]
 
